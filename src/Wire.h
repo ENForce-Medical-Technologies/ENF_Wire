@@ -45,6 +45,25 @@
 typedef void(*user_onRequest)(void);
 typedef void(*user_onReceive)(uint8_t*, int);
 
+struct wireError{
+    uint8_t transmissionError = 0x0;
+    esp_err_t requestError = ESP_OK;
+    bool operator==(int value) const {
+        if(transmissionError == 0 and requestError == ESP_OK) return 1;
+        return 0;
+    }
+    bool operator!=(int other) const {
+        return !(*this == other);
+    }
+    wireError operator|=(wireError secondError) const{
+        wireError retError = wireError();
+        retError.transmissionError = transmissionError | secondError.transmissionError;
+        retError.requestError = requestError | secondError.requestError;
+        return retError;
+    }
+};
+
+
 class TwoWire: public Stream
 {
 protected:
