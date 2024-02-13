@@ -61,6 +61,9 @@ struct wireError{
         retError.requestError = requestError | secondError.requestError;
         return retError;
     }
+    void print(){
+        log_e("Transmission error: %u \tRequest error: %d\n", transmissionError, requestError);
+    }
 };
 
 
