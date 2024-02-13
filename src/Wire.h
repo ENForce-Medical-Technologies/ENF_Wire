@@ -52,15 +52,19 @@ struct wireError{
         if(transmissionError == 0 and requestError == ESP_OK) return 1;
         return 0;
     }
+
     bool operator!=(int other) const {
         return !(*this == other);
     }
-    wireError operator|=(wireError secondError) const{
+
+    wireError& operator|=(const wireError& secondError) {
         wireError retError = wireError();
         retError.transmissionError = transmissionError | secondError.transmissionError;
-        retError.requestError = requestError | secondError.requestError;
-        return retError;
+        retError.requestError = (esp_err_t)((int)requestError | (int)secondError.requestError);
+        *this = retError;
+        return *this;
     }
+    
     void print(){
         log_e("Transmission error: %u \tRequest error: %d\n", transmissionError, requestError);
     }
